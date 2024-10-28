@@ -1,0 +1,6 @@
+# Virtual environments used for plotting
+.venv/
+venv/
+
+# Data files
+*.csv
