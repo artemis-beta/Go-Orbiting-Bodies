@@ -1,0 +1,15 @@
+name: Planetary Sandbox
+on: push
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout Code
+        uses: actions/checkout@v4
+      - name: 🧰 Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '>=1.23.2'
+      - name: 🧪 Run Tests
+        run: go test -v
+        working-directory: planetary
