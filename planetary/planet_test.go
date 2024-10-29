@@ -9,8 +9,8 @@ import (
 func TestVectorTo(t *testing.T) {
 	p1_vec := CartesianVector{0, 0, 0}
 	p2_vec := CartesianVector{1, 2, 3}
-	p1 := Planet{"A", p1_vec}
-	p2 := Planet{"B", p2_vec}
+	p1 := Planet{"A", p1_vec, 0}
+	p2 := Planet{"B", p2_vec, 0}
 	separation := p1.VectorTo(&p2)
 	expected := CartesianVector{1, 2, 3}
 	if math.Abs(separation.X - expected.X) > 1e-8 ||  math.Abs(separation.Y - expected.Y) > 1e-8 || math.Abs(separation.Z - expected.Z) > 1e-8 {
@@ -51,8 +51,8 @@ func TestPolarCartesian(t *testing.T) {
 func TestRotation(t *testing.T) {
 	origin := CartesianVector{0.0, 0.0, 0.0}
 	body_pos := CartesianVector{3.0, 0.0, 0.0}
-	central_body := Planet{"O", origin}
-	other := Planet{"A", body_pos}
+	central_body := Planet{"O", origin, 0}
+	other := Planet{"A", body_pos, 0}
 
 	if other.Position.Phi() != 0.0 {
 		t.Errorf("Expected start angle component %v, got %v", 0.0, other.Position.Phi())

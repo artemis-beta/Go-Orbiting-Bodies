@@ -36,6 +36,19 @@ func (v* PolarVector) String() string {
 	return fmt.Sprintf("%v, %v, %v", v.R, v.Theta, v.Phi)
 }
 
+func (v* CartesianVector) Scale(magnitude float64) CartesianVector {
+	return CartesianVector{
+		v.X * magnitude,
+		v.Y * magnitude,
+		v.Z * magnitude,
+	}
+}
+
+// Calculate the unit vector
+func (v* CartesianVector) Unit() CartesianVector {
+	return v.Scale(1.0 / v.Radial())
+}
+
 // Radial distance calculated as the magnitude of the cartesian vector
 func (v *CartesianVector) Radial() float64 {
 	return math.Sqrt(math.Pow(v.X, 2.0) + math.Pow(v.Y, 2.0) + math.Pow(v.Z, 2.0))
@@ -108,6 +121,7 @@ func (v *PolarVector) Cartesian() CartesianVector {
 type Planet struct {
 	Name string
 	Position CartesianVector
+	Mass float64
 }
 
 func (p *Planet) VectorTo(o *Planet) CartesianVector {
@@ -121,10 +135,10 @@ func (p *Planet) VectorTo(o *Planet) CartesianVector {
 // Given a body 'p' return a new position after 1 second
 // due to rotation in the X-Y plane with respect to a
 // second body 'o'
-func (p *Planet) Orbit(o *Planet, angular_velocity float64) Planet {
+func (p *Planet) Orbit(o *Planet) Planet {
 	separation := o.VectorTo(p)
 	new_separation_polar := separation.Polar()
-	new_separation_polar.Phi += angular_velocity
+	new_separation_polar.Phi += p.KeplerAngularVelocity(o)
 	new_separation := new_separation_polar.Cartesian()
 
 	position := o.Position.Add(&new_separation)
@@ -132,6 +146,7 @@ func (p *Planet) Orbit(o *Planet, angular_velocity float64) Planet {
 	return Planet{
 		p.Name,
 		position,
+		p.Mass,
 	}
 }
 

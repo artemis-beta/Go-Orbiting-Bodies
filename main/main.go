@@ -16,19 +16,19 @@ import (
 
 func main() {
 
-	const N_STEPS int = 500
+	const N_STEPS int = 1e3
 
 	// Define cartesian coordinates for each body
 	planet_a_vec := planetary.CartesianVector{X: 0, Y: 0, Z: 0}
-	planet_b_vec := planetary.CartesianVector{X: 4, Y: 1, Z: 0}
-	planet_c_vec := planetary.CartesianVector{X: 6, Y: 2, Z: 0}
-	planet_d_vec := planetary.CartesianVector{X: 3, Y: 5, Z: 0}
+	planet_b_vec := planetary.CartesianVector{X: 4e3, Y: 1e3, Z: 0}
+	planet_c_vec := planetary.CartesianVector{X: 4.3e3, Y: 1.2e3, Z: 0}
+	planet_d_vec := planetary.CartesianVector{X: 4.35e3, Y: 1.27e3, Z: 0}
 
 	// Define the orbiting bodies
-	planet_a := planetary.Planet{Name: "A", Position: planet_a_vec}
-	planet_b := planetary.Planet{Name: "B", Position: planet_b_vec}
-	planet_c := planetary.Planet{Name: "C", Position: planet_c_vec}
-	planet_d := planetary.Planet{Name: "D", Position: planet_d_vec}
+	planet_a := planetary.Planet{Name: "A", Position: planet_a_vec, Mass: 1e17}
+	planet_b := planetary.Planet{Name: "B", Position: planet_b_vec, Mass: 1e15}
+	planet_c := planetary.Planet{Name: "C", Position: planet_c_vec, Mass: 1e13}
+	planet_d := planetary.Planet{Name: "D", Position: planet_d_vec, Mass: 1e10}
 
 	// Open data file for writing
 	f, err := os.Create("data.csv")
@@ -49,8 +49,23 @@ func main() {
 				log.Fatal(err)
 			}
 		}
-		planet_d = planet_d.Orbit(&planet_c, 0.16)
-		planet_c = planet_c.Orbit(&planet_b, 0.1)
-		planet_b = planet_b.Orbit(&planet_a, 0.05)
+		planet_b_new := planet_b.Orbit(&planet_a)
+
+		// Find the vector translation of planet B
+		// and apply it to all orbiting bodies
+		b_offset := planet_b.VectorTo(&planet_b_new)
+		planet_c.Position = planet_c.Position.Add(&b_offset)
+		planet_d.Position = planet_d.Position.Add(&b_offset)
+		planet_c_new := planet_c.Orbit(&planet_b_new)
+
+		// Find the vector translation of planet C
+		// and apply it to all orbiting bodies
+		c_offset := planet_c.VectorTo(&planet_c_new)
+		planet_d.Position = planet_d.Position.Add(&c_offset)
+
+		planet_d = planet_d.Orbit(&planet_c_new)
+		planet_c = planet_c_new
+		planet_b = planet_b_new 
+
 	}
 }
