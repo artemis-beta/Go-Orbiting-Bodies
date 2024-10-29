@@ -60,7 +60,7 @@ func TestRotation(t *testing.T) {
 
 	for i := 1; i < 9; i++ { 
 
-		other = other.Orbit(&central_body, math.Pi / 4.0)
+		other = other.Orbit(&central_body)
 		t.Logf("%v", other.Position.Phi())
 
 		if math.Abs(other.Position.Phi() - float64(i) * math.Pi / 4.0) > 1e-8 {
